@@ -1,0 +1,52 @@
+fix sound server
+- "mix" sounds to single channel
+- Add alternative song
+- splat sound (pfft)
+- splash sound (ba-loop)
+- car horn?? meep-meep
+
+add menu to main screen
+- continue
+- start
+- soundFX
+- Music
+- Difficulty 
+
+high scores
+- cycle menu
+- save to flash
+[X]pausing
+
+power-ups
+[X] invulnerability
+[ ] sound fx
+[ ] move to lilly pads
+[ ] inversion drawing
+[ ] power-down
+[ ] Obstacles
+
+
+Objects
+-turtles
+-alligators
+-ducks
+-caves
+
+SPD_PPS macro framerate independant speed specification.
+
+/** Includes *****************************************************************/
+/** Constants and Macros *****************************************************/
+/** Type Definitions *********************************************************/
+/** Function Prototypes ******************************************************/
+/** Data *********************************************************************/
+/** Functions ****************************************************************/
+
+/**
+ * Function/Method Description
+ *
+ * @param name description
+ * @see header.h
+ * @return header.h
+ */
+
+
