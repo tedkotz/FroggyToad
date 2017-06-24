@@ -11,6 +11,7 @@
 #include "resources.h"
 #include "menu.h"
 #include "main.h"
+#include "highscore.h"
 #include "froggy_toad.h"
 #include <EEPROM.h>
 
@@ -384,8 +385,13 @@ Status gameScreen(Event evt)
      {
        requestSoundEffect(SFX_Bell);
      }
+     else
+     {
+       gameState.food=0;
+       
+     }
      requestMusic(NULL);
-     return goNextState(menuScreen);
+     return goNextState(checkScore(gameState.score, menuScreen));
      break;
 
     case EVT_UP:
@@ -613,6 +619,32 @@ int8_t showDifficulty( void )
  * @see header.h
  * @return header.h
  */
+int8_t showBackground( void )
+{
+  arduboy.print(F("Background"));
+  return 10;
+}
+
+/**
+ * Function/Method Description
+ *
+ * @param name description
+ * @see header.h
+ * @return header.h
+ */
+int8_t showHighScores( void )
+{
+  arduboy.print(F("High Scores"));
+  return 11;
+}
+
+/**
+ * Function/Method Description
+ *
+ * @param name description
+ * @see header.h
+ * @return header.h
+ */
 void onContinue( void )
 {
     arduboy.initRandomSeed();
@@ -674,6 +706,33 @@ void onDifficulty( void )
   if( difficulty > MAX_DIFFICULTY ) difficulty = 1;
 }
 
+/**
+ * Function/Method Description
+ *
+ * @param name description
+ * @see header.h
+ * @return header.h
+ */
+void onBackground( void )
+{
+    requestMusic(ScarboroughFair);
+    goNextState(backstoryScreen);
+}
+
+/**
+ * Function/Method Description
+ *
+ * @param name description
+ * @see header.h
+ * @return header.h
+ */
+void onHighScores( void )
+{
+    requestMusic(DrunkenSailor);
+    stopMusicLoop();
+    goNextState(highScoreDisplay);
+}
+
 
 MenuItem mainMenu[] =
 {
@@ -681,7 +740,9 @@ MenuItem mainMenu[] =
   { showStart,      onStart },
   { showSoundFX,    onSoundFX },
   { showMusic,      onMusic },
-  { showDifficulty, onDifficulty },
+//Bring back when difficulty setting does something  { showDifficulty, onDifficulty },
+  { showBackground, onBackground },
+  { showHighScores, onHighScores },
 } ;
 #define MAIN_MENU_SIZE (sizeof(mainMenu)/sizeof(MenuItem))
 
@@ -724,6 +785,7 @@ static void processMenuEvent( Event evt, Menu *menu )
 Status menuScreen(Event evt)
 {
   static Menu menuState;
+  requestMusic(NULL);
   if(stateCount<2)
   {
     if((gameState.food<1) ||(gameState.food> MAX_FOOD))
@@ -736,12 +798,65 @@ Status menuScreen(Event evt)
       initMenuState(&menuState, mainMenu, MAIN_MENU_SIZE);      
     }
   }
+  else if (stateCount > (30*FRAME_RATE))
+  {
+    if( random(2) )
+    {
+      requestMusic(DrunkenSailor);
+      stopMusicLoop();
+      return goNextState(highScoreDisplay);
+    }
+    else
+    {
+      requestMusic(ScarboroughFair);
+      return goNextState(backstoryScreen);
+    }
+  }
   processMenuEvent( evt, &menuState );
+
   // show Menu Screen;
   arduboy.setTextSize(2);
   arduboy.print(F("FroggyToad\n"));
   arduboy.setTextSize(1);
   displayMenu( &menuState, 6, 40, &arduboy );
+  return STATUS_OK;
+}
+
+
+/**
+ * The display state to display and manage the menu
+ *
+ * @param evt The next event to process
+ * @return STATUS_OK
+ */
+Status backstoryScreen(Event evt)
+{
+  switch(evt)
+  {
+    case EVT_UP:
+      if(stateCount>=8)
+      {
+        stateCount-=8;
+      }
+
+    break;
+    case EVT_DN:
+      stateCount+=8;
+
+    break;
+    case EVT_A:
+    case EVT_B:
+      stopMusicLoop();
+      return goNextState(menuScreen);
+    break;
+  }
+  if (stateCount > ((56+12*8)*FRAME_RATE/4))
+  {
+    stopMusicLoop();
+    return goNextState(menuScreen);
+  }
+  arduboy.setCursor(0, 56-((stateCount*4)/FRAME_RATE));
+  arduboy.print(F("Toshi Toad is just\ntrying to make his\nway in life.\n\nRough waters and\nterrible traffic have\nmade him anxious.\n\nHelp Toshi find some\ntasty treats.\n\nKeep on your toes.\nGrab Power-Ups.\nAnd, most importantly\nSTAY FROGGY."));
   return STATUS_OK;
 }
 
@@ -756,6 +871,7 @@ void setup() {
   arduboy.begin();
   initTaskModel(menuScreen);
   gameState.food=0;
+  readHighScores();
 }
 
 /**

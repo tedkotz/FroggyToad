@@ -26,6 +26,11 @@ power-ups
 [ ] Obstacles
 
 
+Flash saving
+- wear leveling (log filesystem object model)
+- need to support multiple flash sizes 
+- minimize erase cycles
+
 Objects
 -turtles
 -alligators

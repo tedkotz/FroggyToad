@@ -1,5 +1,15 @@
+#ifndef HIGHSCORE_H
+#define HIGHSCORE_H
 
-void checkScore( uint32_t newScore );
+#include "main.h"
 
-void highScoreDisplay( );
+DisplayState checkScore( uint32_t newScore, DisplayState defaultState );
 
+Status highScoreDisplay(Event evt);
+
+
+void resetEEPROM( void );
+
+void readHighScores( void );
+
+#endif //HIGHSCORE_H
