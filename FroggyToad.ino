@@ -13,7 +13,6 @@
 #include "main.h"
 #include "highscore.h"
 #include "froggy_toad.h"
-#include <EEPROM.h>
 
 /** Constants and Macros *****************************************************/
 #define OBSTACLES_PER_ROW_POWER (2)
@@ -89,17 +88,17 @@ int8_t difficulty=1;
 
 const ObstacleInfo obstacles[NUM_OBSTACLE_TYPES] PROGMEM = {
   /* OBS_SIDEWALK,   */ { NULL,           0,   0, 127,  0,  0 },
-  /* OBS_CARLT,      */ { carImg,        10, SPD_PS2PF(-480), SPD_PS2PF( -60), 24, 64 },
-  /* OBS_ROADSTERLT, */ { roadsterLtImg,  8, SPD_PS2PF(-960), SPD_PS2PF(-120), 36, 80 },
-  /* OBS_TRUCKLT,    */ { truckLtImg,    24, SPD_PS2PF(-480), SPD_PS2PF( -60), 24, 64 },
-  /* OBS_TRACTORLT,  */ { tractorLtImg,  10, SPD_PS2PF(-480), SPD_PS2PF( -60), 24, 64 },
-  /* OBS_CARRT,      */ { carImg,        10, SPD_PS2PF(  60), SPD_PS2PF( 480), 24, 64 },
-  /* OBS_ROADSTERRT, */ { roadsterRtImg,  8, SPD_PS2PF( 120), SPD_PS2PF( 960), 36, 80 },
-  /* OBS_TRUCKRT,    */ { truckRtImg,    24, SPD_PS2PF(  60), SPD_PS2PF( 480), 24, 64 },
-  /* OBS_TRACTORRT,  */ { tractorRtImg,  10, SPD_PS2PF(  60), SPD_PS2PF( 480), 24, 64 },
-  /* OBS_LILLYPAD,   */ { lillypadImg,    7, SPD_PS2PF(   0), SPD_PS2PF(   0),  0,100 },
-  /* OBS_LOGLT,      */ { logImg,        24, SPD_PS2PF(-480), SPD_PS2PF( -60), 16, 48 },
-  /* OBS_LOGRT,      */ { logImg,        24, SPD_PS2PF(  60), SPD_PS2PF( 480), 16, 48 },
+  /* OBS_CARLT,      */ { carImg,        10, (uint8_t)SPD_PS2PF(-480), (uint8_t)SPD_PS2PF( -60), 24, 64 },
+  /* OBS_ROADSTERLT, */ { roadsterLtImg,  8, (uint8_t)SPD_PS2PF(-960), (uint8_t)SPD_PS2PF(-120), 36, 80 },
+  /* OBS_TRUCKLT,    */ { truckLtImg,    24, (uint8_t)SPD_PS2PF(-480), (uint8_t)SPD_PS2PF( -60), 24, 64 },
+  /* OBS_TRACTORLT,  */ { tractorLtImg,  10, (uint8_t)SPD_PS2PF(-480), (uint8_t)SPD_PS2PF( -60), 24, 64 },
+  /* OBS_CARRT,      */ { carImg,        10, (uint8_t)SPD_PS2PF(  60), (uint8_t)SPD_PS2PF( 480), 24, 64 },
+  /* OBS_ROADSTERRT, */ { roadsterRtImg,  8, (uint8_t)SPD_PS2PF( 120), (uint8_t)SPD_PS2PF( 960), 36, 80 },
+  /* OBS_TRUCKRT,    */ { truckRtImg,    24, (uint8_t)SPD_PS2PF(  60), (uint8_t)SPD_PS2PF( 480), 24, 64 },
+  /* OBS_TRACTORRT,  */ { tractorRtImg,  10, (uint8_t)SPD_PS2PF(  60), (uint8_t)SPD_PS2PF( 480), 24, 64 },
+  /* OBS_LILLYPAD,   */ { lillypadImg,    7, (uint8_t)SPD_PS2PF(   0), (uint8_t)SPD_PS2PF(   0),  0,100 },
+  /* OBS_LOGLT,      */ { logImg,        24, (uint8_t)SPD_PS2PF(-480), (uint8_t)SPD_PS2PF( -60), 16, 48 },
+  /* OBS_LOGRT,      */ { logImg,        24, (uint8_t)SPD_PS2PF(  60), (uint8_t)SPD_PS2PF( 480), 16, 48 },
 };
 
 
@@ -254,7 +253,6 @@ void animateRow( GameRowType* rowPtr , bool containsPlayer )
   {
     if(rowPtr->type==OBS_SIDEWALK)
     {
-      int8_t powerUpX=128;
       if(rowPtr->spd<48)
       {
         int8_t powerUpX=(rowPtr->spd & 0x0F)*8;
@@ -446,7 +444,10 @@ Status gameScreen(Event evt)
      gameState.playerImg=frogRtImg;
      requestSoundEffect(SFX_Hit);
      break;
-    
+
+    default:
+     // ignore unknown events
+     break;    
   }
   arduboy.setCursor(8, 56);
   arduboy.print(gameState.score);
@@ -773,6 +774,10 @@ static void processMenuEvent( Event evt, Menu *menu )
     case EVT_B:
       onMenuClick(menu);
     break;
+
+    default:
+     // ignore unknown events
+    break;
   }
 }
 
@@ -849,6 +854,10 @@ Status backstoryScreen(Event evt)
       stopMusicLoop();
       return goNextState(menuScreen);
     break;
+    
+    default:
+     // ignore unknown events
+    break;
   }
   if (stateCount > ((56+12*8)*FRAME_RATE/4))
   {
@@ -885,6 +894,3 @@ void loop()
 {
   runTasks();
 }
-
-
-

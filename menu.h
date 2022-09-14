@@ -11,7 +11,7 @@ typedef void (*MenuCallBack)(void);
 
 typedef struct
 {
-  MenuCallBack show;
+  MenuShow show;
   MenuCallBack selected;
 } MenuItem;
 

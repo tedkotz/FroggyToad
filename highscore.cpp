@@ -41,7 +41,7 @@ void resetEEPROM( )
 
 void readScore( ScoreSave* save, int slot )
 {
-  uint8_t* dest=(void*)save;
+  uint8_t* dest=(uint8_t*)save;
   int source = BASE_EEPROM_ADDR+slot*ENTRY_SIZE;
   for( int i = 0; i<ENTRY_SIZE; ++i)
   {
@@ -94,7 +94,7 @@ void readHighScores( void )
 
 void writeScore( const ScoreSave* save, int slot )
 {
-  const uint8_t* src=(const void*)save;
+  const uint8_t* src=(const uint8_t*)save;
   int dst = BASE_EEPROM_ADDR+slot*ENTRY_SIZE;
   for( int i = 0; i<ENTRY_SIZE; ++i)
   {
@@ -180,7 +180,10 @@ Status initialsReadState(Event evt)
      }
      overwriteScore->name[namePos]=c;
      break;
-    
+     
+    default:
+     // ignore unknown events
+     break;
   }
   arduboy.setCursor(58, 32);
   arduboy.print(overwriteScore->name);
@@ -239,5 +242,3 @@ DisplayState checkScore( uint32_t newScore, DisplayState defaultState )
     return defaultState;
   }
 }
-
-
